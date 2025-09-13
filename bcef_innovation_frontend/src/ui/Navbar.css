@@ -1,0 +1,330 @@
+        @font-face {
+            font-family: 'Asul-Bold';
+            src: url('../assets/fonts/Asul-Bold.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: sans-serif;
+            padding-top: 100px; /* Pour éviter que le contenu soit caché par la navbar fixe */
+        }
+
+        /* NAVBAR INITIALE (transparente) */
+        .navbar {
+        display: flex;
+        align-items: center;
+        height: 80px;
+        padding: 0 32px 10px 32px;
+        background: transparent;
+        box-sizing: border-box;
+        justify-content: space-between;
+        font-family: 'Asul-Bold', sans-serif;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(0px);
+        }
+        .navbar-logo .scrolled{
+            height: 60px;
+            transition: height 0.4s ease;
+        }
+        
+        /* NAVBAR APRÈS DÉFILEMENT */
+        .navbar.scrolled {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(3px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        padding: 0 32px 5px 32px;
+        height: 70px;
+        }
+
+        .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Espace entre logo et décoration */
+        z-index: 1001;
+        height: 80px;
+        }
+
+        .navbar-logo img {
+        height: 90px; /* Taille cohérente et réduite */
+        width: auto;
+        object-fit: contain;
+        margin: 0;
+        padding: 0;
+        }
+        .navbar-logo img.scrolled{
+            height: 70px;
+            transition: height 0.4s ease;
+        }
+
+
+        /* Ellipses décoratives:  logo de Bcef */
+        .navbar-logo .ellipses {
+            height: 65px;
+            padding-top: 80px;
+            width: auto;
+            object-fit: contain;
+            margin: 0;
+            padding: 0;
+            animation: spin 90s linear infinite;
+        }
+
+        .decorative-shape {
+            position: absolute;
+            top: -10px;
+            left: -50px;
+            width: 60px;
+            height: 90px;
+            padding-bottom: 0px;
+            rotate: -230deg; /* rotation de 180 degrés */
+            background-color: #ff9e04; /* couleur de fond douce */
+            border-radius: 50% 50% 90% 50%;  /* forme ovale arrondie */
+            opacity: 0.3; /* transparence subtile */
+            z-index: -1; /* placé derrière le logo */
+        }
+
+        /* Définition de l'animation du logo*/
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+            gap: 50px;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+        .navbar-item .submenu {
+            display: none;
+            position: absolute;
+            top: 100%; /* juste en dessous du parent */
+            left: 0;
+            background: white;
+            border: 1px solid #ddd;
+            list-style: none;
+            padding: 10px 0;
+            min-width: 160px;
+            box-shadow: 0 4px 8px rgb(0 0 0 / 0.03);
+            z-index: 100;
+            
+            }
+
+
+
+            .navbar-item:hover .submenu {
+            display: block;
+        }
+            
+
+            .navbar-item {
+            position: relative;
+            cursor: pointer;
+            padding-bottom: 6px;
+            }
+
+            /* Styles du lien principal */
+            .navbar-item > a {
+            text-decoration: none;
+            color: #444444;
+            font-weight: 500;
+            display: inline-block;
+            position: relative;
+            }
+
+        /* Création de la barre underline avec ::after */
+            .navbar-item > a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, #ff9800, #4caf50, #2196f3);
+            border-radius: 3px 3px 0 0;
+            transform: scaleX(0);
+            transform-origin: bottom left;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+            }
+
+            /* Quand on hover le menu parent ou le sous-menu, on déploie la barre */
+            .navbar-item:hover > a::after,
+            .navbar-item:hover > ul.submenu,
+            .navbar-item ul.submenu:hover,
+            .navbar-item:hover > ul.submenu a::after {
+            transform: scaleX(1);
+            }
+
+            /* Sous-menu caché par défaut */
+            .navbar-item ul.submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #ddd;
+            list-style: none;
+            padding: 10px 0;
+            min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            }
+
+            /* Sous-menu visible sur hover menu parent ou hover sous-menu */
+            .navbar-item:hover ul.submenu,
+            .navbar-item ul.submenu:hover {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+            }
+
+        @keyframes underline-in {
+            from {
+                width: 0;
+                opacity: 0.1;
+            }
+            to {
+                width: 100%;
+                opacity: 1;
+            }
+        }
+
+        /* Menu hamburger - caché par défaut */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 3px;
+            background-color: #444;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Media Queries pour le responsive */
+        @media (max-width: 900px) {
+            .navbar-menu {
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 20px 10px 20px;
+                height: 70px;
+            }
+            
+            .navbar-logo img {
+                height: 80px;
+                padding-top: 70px;
+            }
+            
+            .navbar-logo .ellipses {
+                height: 50px;
+                padding-top: 70px;
+            }
+            
+            .decorative-shape {
+                left: -40px;
+                width: 50px;
+                height: 75px;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .navbar-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                height: 0;
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 0;
+                overflow: hidden;
+                transition: height 0.4s ease;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .navbar-menu.active {
+                height: calc(100vh - 70px);
+                padding: 20px 0;
+            }
+            
+            .navbar-item {
+                width: 100%;
+                text-align: center;
+                padding: 15px 0;
+                font-size: 1.2em;
+            }
+            
+            /* Animation hamburger en croix */
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 8px);
+            }
+            
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(5px, -8px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0 15px 10px 15px;
+            }
+            
+            .navbar-logo img {
+                height: 70px;
+                padding-top: 60px;
+            }
+            
+            .navbar-logo .ellipses {
+                height: 45px;
+                padding-top: 60px;
+            }
+            
+            .decorative-shape {
+                left: -35px;
+                width: 45px;
+                height: 65px;
+            }
+        }

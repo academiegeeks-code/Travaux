@@ -1,0 +1,235 @@
+.features-section {
+  padding: 60px 10vw;
+  background: #fafafa;
+  display: flex;
+  justify-content: center;
+}
+
+.features-grid {
+  display: flex;
+  gap: 40px;
+  max-width: auto;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.feature-card {
+  background: #fff;
+  padding: 40px 30px 50px 30px;
+  box-shadow: 0 0 30px rgb(0 0 0 / 0.05);
+  border-radius: 14px;
+  flex: 1;
+  max-width: 360px;
+  text-align: center;
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.feature-icon {
+  position: relative;
+  z-index: 2;
+}
+
+.feature-title {
+  color: #f9b200;
+  font-weight: 700;
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+.feature-description {
+  font-size: 1rem;
+  color: #555;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.feature-btn {
+  border: 2px solid #f9b200;
+  color: #f9b200;
+  background: transparent;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-btn:hover {
+  background: #f9b200;
+  color: white;
+}
+
+.arrow {
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .features-grid {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .feature-card {
+    max-width: 100%;
+  }
+}
+
+.feature-card {
+  position: relative;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  overflow: visible;
+}
+
+.line {
+  position: absolute;
+  background: #f9b200;
+}
+
+.line-horizontal {
+  height: 2px;
+  width: 40px;
+}
+
+.line-vertical {
+  width: 2px;
+  height: 40px;
+}
+
+.point {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(45deg,#ffffff,#dfd4ba, #ff9800, #f9b200);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Positionnement des lignes et points à chaque coin */
+
+.line-top-left-horizontal {
+  top: -10px;
+  left: -10px;
+}
+
+.point-top-left-horizontal {
+  top: -5px;
+  left: 0;
+}
+
+.line-top-left-vertical {
+  top: -10px;
+  left: -10px;
+}
+
+.point-top-left-vertical {
+  top: 0;
+  left: -5px;
+}
+
+.line-top-right-horizontal {
+  top: -10px;
+  right: -10px;
+}
+
+.point-top-right-horizontal {
+  top: -5px;
+  right: 0;
+}
+
+.line-top-right-vertical {
+  top: -10px;
+  right: -10px;
+}
+
+.point-top-right-vertical {
+  top: 0;
+  right: -5px;
+}
+
+.line-bottom-left-horizontal {
+  bottom: -10px;
+  left: -10px;
+}
+
+.point-bottom-left-horizontal {
+  bottom: -5px;
+  left: 0;
+}
+
+.line-bottom-left-vertical {
+  bottom: -10px;
+  left: -10px;
+}
+
+.point-bottom-left-vertical {
+  bottom: 0;
+  left: -5px;
+}
+
+.line-bottom-right-horizontal {
+  bottom: -10px;
+  right: -10px;
+}
+
+.point-bottom-right-horizontal {
+  bottom: -5px;
+  right: 0;
+}
+
+.line-bottom-right-vertical {
+  bottom: -10px;
+  right: -10px;
+}
+
+.point-bottom-right-vertical {
+  bottom: 0;
+  right: -5px;
+}
+
+/* Animation sur hover : les points bougent vers autre extrémité de leur ligne */
+
+.feature-card:hover .point-top-left-horizontal {
+  left: 32px; /* ligne length - point width */
+}
+
+.feature-card:hover .point-top-left-vertical {
+  top: 32px;
+}
+
+.feature-card:hover .point-top-right-horizontal {
+  right: 32px;
+}
+
+.feature-card:hover .point-top-right-vertical {
+  top: 32px;
+}
+
+.feature-card:hover .point-bottom-left-horizontal {
+  left: 32px;
+}
+
+.feature-card:hover .point-bottom-left-vertical {
+  bottom: 32px;
+}
+
+.feature-card:hover .point-bottom-right-horizontal {
+  right: 32px;
+}
+
+.feature-card:hover .point-bottom-right-vertical {
+  bottom: 32px;
+}

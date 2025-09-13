@@ -1,0 +1,43 @@
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #000;
+}
+
+.spinner {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.ellipse {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  animation: spin 2s infinite ease-in-out;
+}
+
+.ellipse-1 {
+  background: #00f;
+  animation-delay: 0s;
+}
+
+.ellipse-2 {
+  background: #f00;
+  animation-delay: -0.7s;
+}
+
+.ellipse-3 {
+  background: #ccc;
+  animation-delay: -1.4s;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}

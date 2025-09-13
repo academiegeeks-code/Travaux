@@ -1,6 +1,6 @@
 # innovation/models.py
 from django.db import models
-from users.models import User
+from user_management.models import User
 
 # Modèles pour les données structurées
 class Universite(models.Model):

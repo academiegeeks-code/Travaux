@@ -1,0 +1,314 @@
+.temoignages-section {
+  position: relative;
+  max-width: 650px;
+  min-height: 400px;
+  margin: 3rem auto;
+  padding: 2rem 1rem;
+  text-align: center;
+  overflow: hidden;
+  font-family: "Arial", sans-serif;
+  color: #555;
+  background: #fff;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #f5a623;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  position: relative;
+  z-index: 5;
+}
+
+.underline {
+  width: 60px;
+  height: 3px;
+  background: #f5a623;
+  margin: 0 auto 1rem;
+  z-index: 5;
+}
+
+.subtitle {
+  font-style: italic;
+  color: #777;
+  display: block;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 5;
+}
+
+@font-face {
+    font-family: 'Asul-Bold';
+    src: url(../../assets/fonts/Asul-Bold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Asul-Regular';
+    src: url(../../assets/fonts/Asul-Regular.ttf) format('truetype');
+}
+
+.temoignages-section {
+    position: relative;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    overflow: hidden;
+    
+}
+
+.title {
+    font-family: 'Asul-Bold', sans-serif;
+    font-size: 2.5rem;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.underline {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #ff9800, #ff6f00);
+    margin: 0 auto 1rem;
+    border-radius: 2px;
+}
+
+.subtitle {
+    display: block;
+    text-align: center;
+    font-style: italic;
+    color: #6c757d;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+}
+
+/* Conteneur des témoignages avec animation */
+.temoignages-container {
+    position: relative;
+    max-width: 800px;
+    height: 400px;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+.temoignage-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 1;
+}
+
+.temoignage-slide.active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    z-index: 3;
+}
+
+.temoignage-slide.previous {
+    opacity: 0.5;
+    transform: translateX(-100%) scale(0.9);
+    z-index: 2;
+}
+
+.temoignage-single {
+    box-sizing: border-box;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    border: 1px solid rgba(255, 152, 0, 0.1);
+}
+
+/* Décorations avant et après la description */
+.description {
+    font-family: 'Asul-Bold', sans-serif;
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    position: relative;
+    padding: 0 3rem;
+    line-height: 1.4;
+}
+
+.description::before,
+.description::after {
+    content: "༺꧁";
+    font-size: 1.8rem;
+    color: #ff9800;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.7;
+}
+
+.description::before {
+    content: "༺꧁";
+    left: 0;
+    top: -2%;
+}
+
+.description::after {
+    content: "꧂༻";
+    right: 0;
+    top: -2%;
+}
+
+.content {
+    font-family: 'Asul-Regular', sans-serif;
+    color: #555;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+.content strong {
+    
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.author-container {
+    margin-top: auto;
+}
+
+.author {
+    font-family: 'Asul-Bold', sans-serif;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.role {
+    font-family: 'Asul-Regular', sans-serif;
+    font-size: 1rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.role::before {
+    content: "(";
+}
+
+.role::after {
+    content: ")";
+}
+
+.background-quote {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.03;
+    width: 300px;
+    height: 300px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.decor-filiaire {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ff9800, transparent);
+    width: 60%;
+    margin: 3rem auto 0;
+    opacity: 0.5;
+}
+
+/* Indicateurs de progression */
+.temoignage-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: #ff9800;
+    transform: scale(1.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .temoignages-section {
+        padding: 3rem 1rem;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+    
+    .temoignages-container {
+        height: 450px;
+    }
+    
+    .temoignage-single {
+        padding: 2rem 1.5rem;
+    }
+    
+    .description {
+        font-size: 1.2rem;
+        padding: 0 2rem;
+    }
+    
+    .description::before,
+    .description::after {
+        font-size: 1.4rem;
+    }
+    
+    .content {
+        font-size: 1rem;
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .description {
+        padding: 0 1.5rem;
+    }
+    
+    .description::before,
+    .description::after {
+        font-size: 1.2rem;
+    }
+    
+    .temoignage-single {
+        padding: 1.5rem 1rem;
+    }
+}
+/*
+.decor-filiaire {
+  position: absolute;
+  top: 63%;
+  left: 78%;
+  width: 200px;
+  height: 100%;
+  background: url('../../decoline.avif') no-repeat center;
+  background-size: cover;
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+  
+  rotate:-3deg ;
+  
+}*/

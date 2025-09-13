@@ -1,0 +1,69 @@
+.waveline-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  rotate: 45deg 45deg;
+}
+
+.luxury-waveline {
+  filter: url(#soft-shadow);
+  transition: all 0.8s ease;
+}
+
+/* Effet de lumière subtile au survol */
+.waveline-container:hover .luxury-waveline {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Animation très subtile de pulsation */
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.luxury-waveline {
+  animation: subtle-pulse 8s ease-in-out infinite;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .waveline-container {
+    height: 80px;
+  }
+  
+  .luxury-waveline {
+    opacity: 0.7;
+  }
+}
+
+/* Pour integration avec HeroSection */
+.hero .waveline-container {
+  z-index: 1; /* Derrière le contenu mais devant le background */
+}
+
+/* Version alternative plus discrète */
+.luxury-waveline.subtle {
+  opacity: 0.6;
+}
+
+.luxury-waveline.subtle path:nth-child(1) {
+  opacity: 0.6;
+}
+
+.luxury-waveline.subtle path:nth-child(2) {
+  opacity: 0.4;
+}
+
+.luxury-waveline.subtle path:nth-child(3) {
+  opacity: 0.2;
+}

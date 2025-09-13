@@ -10,7 +10,7 @@ class UsersConfig(AppConfig):
     def ready(self):
         from django.db.models.signals import post_migrate
         from django_celery_beat.models import PeriodicTask, CrontabSchedule
-        from .tasks import clean_expired_tokens
+        from user_management.tasks import clean_expired_tokens
 
         def setup_periodic_tasks(sender, **kwargs):
             

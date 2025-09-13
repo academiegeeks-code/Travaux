@@ -3,6 +3,12 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
+
+#reCaptcha key
+RECAPTCHA_SECRET_KEY= "6LeGVr4rAAAAAMLR6ZcsHqkaqOn9GGiHWmC5JgS0"
+#coté client 6LeGVr4rAAAAAEGEx5NbzKSIFrAZ6f4O4e5XsrKx
+#coté server 6LeGVr4rAAAAAMLR6ZcsHqkaqOn9GGiHWmC5JgS0
+
 # Charger les variables d'environnement depuis un fichier .env
 load_dotenv()
 
@@ -46,12 +52,19 @@ CELERY_TIMEZONE = 'UTC'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv('REDIS_CACHE_LOCATION', "redis://127.0.0.1:6379/1"),
+        "LOCATION": os.getenv("REDIS_CACHE_LOCATION", "redis://127.0.0.1:6379/1"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            #"PARSER_CLASS": "redis.connection._HiredisParser",
+            "SERIALIZER": "django_redis.serializers.pickle.PickleSerializer",
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
         }
     }
 }
+
+
+# settings.py
+REMOVE_USERNAME_FIELD = True  # ou False selon ton besoin
 
 # Applications installées
 INSTALLED_APPS = [
@@ -64,7 +77,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users',
+    'user_management',
     'innovations',
     'django_celery_beat',
     'django_celery_results',
@@ -74,7 +87,7 @@ INSTALLED_APPS = [
 
 # Authentification
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'user_management.User'
 
 # Middleware
 MIDDLEWARE = [
@@ -153,7 +166,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Celery beat schedule pour planifier les tâches
 CELERY_BEAT_SCHEDULE = {
     'clean-expired-tokens': {
-        'task': 'users.tasks.clean_expired_tokens',
+        'task': 'user_management.tasks.clean_expired_tokens',
         'schedule': timedelta(hours=24),
     },
 }
