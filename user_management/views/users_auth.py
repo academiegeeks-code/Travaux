@@ -11,6 +11,7 @@ from .utils import verify_captcha
 # users/views/auth.py
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
+from django.utils.timezone import now
 
 FAILED_LOGIN_PREFIX = "failed_login_attempts:"
 FAILED_LOGIN_EXPIRY = 60 * 15  # 15 minutes d'expiration du compteur
@@ -78,6 +79,8 @@ class LoginView(LoggingMixin, RateLimitMixin, APIView):
         user = authenticate(request, username=email, password=password)
         
         if user is not None:
+            user.last_login = now()
+            user.save(update_fields=['last_login'])
             if user.is_active:
                 # Générer les tokens JWT
                 refresh = RefreshToken.for_user(user)

@@ -212,12 +212,12 @@ const ImportDialog = ({ open, onClose }) => {
           <List dense>
             <ListItem>
               <ListItemIcon><WorkHistory /></ListItemIcon>
-              <ListItemText primary="Import du 15/10/2023" secondary="23 utilisateurs importés, 2 erreurs" />
+              <ListItemText primary="Import du 15/09/2025" secondary="07 utilisateurs importés, 2 erreurs" />
               <Chip label="Terminé" color="success" size="small" />
             </ListItem>
             <ListItem>
               <ListItemIcon><WorkHistory /></ListItemIcon>
-              <ListItemText primary="Import du 10/10/2023" secondary="15 utilisateurs importés" />
+              <ListItemText primary="Import du 10/11/2025" secondary="3 utilisateurs importés" />
               <Chip label="Terminé" color="success" size="small" />
             </ListItem>
           </List>

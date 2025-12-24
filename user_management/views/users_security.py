@@ -19,37 +19,55 @@ class CompatibleMetaclass(type(APIView)):
     pass
 """🔓 ActivationView — Activation sécurisée via token"""
 class ActivationView(LoggingMixin, RateLimitMixin, APIView):
-    rate_limit = 5
-    rate_period = 3600
+    permission_classes = []  # Public
+    authentication_classes = []  # Pas d'authentification requise
+    rate_limit = 100  # 10O tentatives en dev par 5 minutes (à ajuster en prod)
+    rate_period = 300  # 5 minutes en secondes
     rate_scope = 'ip'
 
     def post(self, request):
+        # DEBUG: Affichez les données reçues
+        print("Données reçues:", request.data)
+        print("Headers:", dict(request.headers))
+        
         self.setup_logging_context(request)
         allowed, rate_info = self.check_rate_limit(request, action='activation')
         if not allowed:
             self.log_security_event('activation_rate_limited', rate_info)
-            return self.rate_limit_response(request, rate_info)
+            return self.rate_limit_response(request, rate_info)  # 2 arguments
 
         serializer = ActivationSerializer(data=request.data)
+        # DEBUG: Vérifiez la validation
+        print("Serializer is_valid:", serializer.is_valid())
         if serializer.is_valid():
+            print("Erreurs de validation:", serializer.errors)
             try:
                 user = serializer.activate()
-                user.last_activated_at = timezone.now()
-                user.save(update_fields=['last_activated_at'])
-
+                
                 self.log_success('account_activated', {
                     'user': user.email,
                     'ip': self._get_client_ip(request)
                 })
-                return Response(UserSerializer(user, context={'request': request}).data, status=status.HTTP_200_OK)
+                
+                return Response({
+                    'detail': 'Compte activé avec succès. Vous pouvez maintenant vous connecter.',
+                    'email': user.email
+                }, status=status.HTTP_200_OK)
+                
             except Exception as e:
+                # Gestion d'erreur pendant l'activation
                 self.log_error('activation_failed', e, {'email': request.data.get('email')})
-                return Response({'detail': 'Activation failed due to a server error.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        self.log_error('activation_invalid', ValidationError(serializer.errors))
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+                return Response(
+                    {'detail': 'Erreur lors de l\'activation.'}, 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        else:
+       # Le serializer est invalide
+            self.log_error('activation_invalid', Exception(serializer.errors))
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+                
 """🔐 PasswordResetRequestView — Demande de réinitialisation"""
 class PasswordResetRequestView(LoggingMixin, RateLimitMixin, APIView):
     rate_limit = 5

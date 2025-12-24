@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
+# Générateur de mot de passe temporaire sécurisé
 def generate_secure_temp_password(length: int = 12) -> str:
     """Génère un mot de passe temporaire sécurisé."""
     chars = string.ascii_letters + string.digits + string.punctuation
@@ -32,6 +33,9 @@ def generate_secure_temp_password(length: int = 12) -> str:
             re.search(r'[\W_]', pw)):
             return pw
 
+# Manager personnalisé pour le modèle User. 
+# Manage la création d'utilisateurs et superutilisateurs.
+#
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -77,6 +81,7 @@ class CustomUserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+#Active User Manager qui filtre les utilisateurs actifs non supprimés et non désactivés
 class ActiveUserManager(models.Manager):
     """Manager pour les utilisateurs actifs non supprimés."""
     def get_queryset(self):
@@ -85,6 +90,11 @@ class ActiveUserManager(models.Manager):
             deleted_at__isnull=True
         )
 
+# Modèle utilisateur personnalisé. 
+# Importe AbstractUser pour bénéficier des fonctionnalités de Django.
+# Nous utilisons email comme identifiant principal. 
+# Enfin, nous ajoutons des champs supplémentaires pour la gestion des rôles, statuts, et autres.
+# Nous utilisons CustomUserManager comme manager principal et ActiveUserManager pour les utilisateurs actifs.
 class User(AbstractUser):
     """Modèle utilisateur personnalisé."""
 
@@ -143,7 +153,16 @@ class User(AbstractUser):
     # Gestion des rôles et statuts
     role = models.CharField(_('role'), max_length=20, choices=ROLE_CHOICES, default='visitor')
     status = models.CharField(_('status'), max_length=20, choices=Status.choices, default=Status.INACTIVE)
-    
+    # Relation ONE-TO-ONE : un stagiaire → un seul thème
+    assigned_theme = models.OneToOneField(
+        'internship_management.Theme',           # Référence au modèle Theme
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_intern',           # → theme.assigned_intern donne le User
+        verbose_name=_('thème attribué'),
+        help_text=_("Thème de stage actuellement attribué à ce stagiaire")
+    )
     # Gestion de la suppression
     deleted_at = models.DateTimeField(_('deleted at'), null=True, blank=True)
     deleted_by = models.ForeignKey(
@@ -289,6 +308,9 @@ class User(AbstractUser):
         self.deleted_by = None
         self.save(update_fields=['is_active', 'status', 'deleted_at', 'deleted_by'])
 
+# Profil étendu pour les utilisateurs. 
+# Est lié OneToOne avec le modèle User. 
+# Et contient des informations supplémentaires.
 class Profile(models.Model):
     """Profil étendu pour les utilisateurs."""
     user = models.OneToOneField(
@@ -321,32 +343,11 @@ class Profile(models.Model):
     def __str__(self):
         return _("Profile for %(email)s") % {'email': self.user.email}
 
-class Suggestion(models.Model):
-    """Suggestions de domaines de stage."""
-    user = models.ForeignKey(
-        User, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True
-    )
-    email = models.EmailField(_('email'))
-    domain_suggested = models.CharField(_('suggested domain'), max_length=100)
-    message = models.TextField(_('message'), blank=True)
-    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
 
-    class Meta:
-        verbose_name = _('suggestion')
-        verbose_name_plural = _('suggestions')
-        indexes = [
-            models.Index(fields=['created_at']),
-        ]
 
-    def __str__(self):
-        if self.user:
-            return _("Suggestion from %(email)s") % {'email': self.user.email}
-        return _("Anonymous suggestion")
 
-# Signaux
+# Signaux pour créer automatiquement un profil à la création d'un utilisateur. 
+# Et pour valider certaines données avant sauvegarde.
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 

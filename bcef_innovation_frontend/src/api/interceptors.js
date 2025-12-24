@@ -2,7 +2,7 @@ import api from "./api";
 
 // Intercepteur de requête : ajoute le token JWT
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access");
+  const token = localStorage.getItem("access_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -21,16 +21,16 @@ api.interceptors.response.use((response) => {
   if (error.response?.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true;
     try {
-      const refreshToken = localStorage.getItem("refresh");
+      const refreshToken = localStorage.getItem("refresh_token");
       const res = await api.post("token/refresh/", { refresh: refreshToken });
       const newAccess = res.data.access;
-      localStorage.setItem("access", newAccess);
+      localStorage.setItem("access_token", newAccess);
       api.defaults.headers.Authorization = `Bearer ${newAccess}`;
       originalRequest.headers.Authorization = `Bearer ${newAccess}`;
       return api(originalRequest); // relance la requête originale
     } catch (refreshError) {
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
       window.location.href = "/login"; // redirige vers login
       return Promise.reject(refreshError);
     }

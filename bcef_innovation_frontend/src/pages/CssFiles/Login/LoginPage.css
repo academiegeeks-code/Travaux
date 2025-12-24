@@ -1,0 +1,446 @@
+/* Variables pour le thème Data Science */
+:root {
+  --primary-blue: #ffffff;
+  --secondary-blue: #3b82f6;
+  --dark-blue: #1e40af;
+  --primary-purple: #b84d4d;
+  --secondary-purple: #a78bfa;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --text-white: rgba(255, 255, 255, 0.9);
+  --text-light: rgba(255, 255, 255, 0.7);
+}
+/* Ajoutez cette règle à votre CSS existant */
+
+/* Reset des marges et paddings par défaut */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.captcha-status {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.captcha-status .error-message {
+  color: #ff4d4f;
+}
+
+.captcha-status .success-message {
+  color: #52c41a;
+}
+
+.login-admin-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Styles de base */
+.login-admin-container {
+  margin-top: 70px; /* Compense la hauteur de la navbar */
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: url(./../../../degrade-bleu-doux-fond-couleur_43969-1038.avif) no-repeat center center;
+  background-size: cover; /* ajuste l’image à toute la page */
+}
+/* linear-gradient(135deg, #e7bd7f 0%, #f5f5f5 50%, #efbd7f 100%)
+/* Arrière-plan avec éléments Data Science */
+.login-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+
+
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(10px) translateX(-10px); }
+  75% { transform: translateY(-10px) translateX(-20px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Formulaire en verre (glassmorphisme) - Version compacte */
+.login-admin-form {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  padding: 1.5rem; /* Réduction du padding */
+  border-radius: 16px; /* Légère réduction */
+  background: var(--glass-bg, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+  backdrop-filter: blur(10px);
+  box-shadow: var(--glass-shadow, 0 8px 32px rgba(0, 0, 0, 0.2));
+  color: var(--text-white, #ffffff);
+  box-sizing: border-box;
+  padding: 1.2rem;
+  margin: 1rem; /* Marge externe réduite */
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem; /* Réduit de 2rem */
+}
+
+.login-icon {
+  width: 40px;
+  height: 50px;
+  margin: 0 auto 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+}
+
+.login-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--text-white);
+}
+
+.login-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  background: linear-gradient(90deg, var(--secondary-blue), var(--secondary-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.login-header p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* Champs de formulaire avec effet néon doux */
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-white, #ffffff);
+}
+
+.input-icon {
+  margin-right: 0.5rem;
+  display: flex;
+}
+
+.input-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--secondary-blue, #93c5fd);
+}
+
+.glassmorphism-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-white, #ffffff);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  box-shadow: 
+    0 0 5px rgba(100, 200, 255, 0.1),
+    inset 0 0 10px rgba(100, 200, 255, 0.05);
+}
+
+.glassmorphism-input:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 0 15px rgba(59, 130, 246, 0.3),
+    0 0 30px rgba(59, 130, 246, 0.2),
+    inset 0 0 15px rgba(59, 130, 246, 0.1);
+  animation: neon-pulse 2s infinite alternate;
+}
+
+.glassmorphism-input:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 0 10px rgba(59, 130, 246, 0.2),
+    inset 0 0 10px rgba(59, 130, 246, 0.05);
+}
+
+.glassmorphism-input::placeholder {
+  color: var(--text-light, #cbd5e1);
+}
+
+/* Animation de pulsation néon */
+@keyframes neon-pulse {
+  from {
+    box-shadow: 
+      0 0 15px rgba(59, 130, 246, 0.3),
+      0 0 30px rgba(59, 130, 246, 0.2),
+      inset 0 0 15px rgba(59, 130, 246, 0.1);
+  }
+  to {
+    box-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.4),
+      0 0 40px rgba(59, 130, 246, 0.3),
+      inset 0 0 20px rgba(59, 130, 246, 0.15);
+  }
+}
+
+/* Variantes de couleurs néon */
+.glassmorphism-input.neon-blue:focus {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 
+    0 0 15px rgba(59, 130, 246, 0.3),
+    0 0 30px rgba(59, 130, 246, 0.2),
+    inset 0 0 15px rgba(59, 130, 246, 0.1);
+}
+
+.glassmorphism-input.neon-purple:focus {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 
+    0 0 15px rgba(139, 92, 246, 0.3),
+    0 0 30px rgba(139, 92, 246, 0.2),
+    inset 0 0 15px rgba(139, 92, 246, 0.1);
+}
+
+.glassmorphism-input.neon-cyan:focus {
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 
+    0 0 15px rgba(6, 182, 212, 0.3),
+    0 0 30px rgba(6, 182, 212, 0.2),
+    inset 0 0 15px rgba(6, 182, 212, 0.1);
+}
+/* Conteneur mot de passe avec effet néon */
+.password-input-container {
+  position: relative;
+}
+
+.password-input-container .glassmorphism-input {
+  padding-right: 45px; /* Espace pour le bouton toggle */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light, #cbd5e1);
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.toggle-password:hover {
+  color: var(--text-white, #ffffff);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.toggle-password:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-password:hover svg {
+  transform: scale(1.1);
+}
+
+/* Effet néon renforcé quand le champ est en focus */
+.password-input-container:focus-within .toggle-password {
+  color: var(--secondary-blue, #93c5fd);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+/* Animation subtile pour l'icône */
+@keyframes icon-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.password-input-container:focus-within .toggle-password svg {
+  animation: icon-pulse 2s infinite;
+}
+
+/* Bouton de connexion admin - Style 2 (valeurs fixes) */
+.login-admin-btn {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-admin-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.login-admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -3px rgba(37, 99, 235, 0.4);
+}
+
+.login-admin-btn:hover::before {
+  opacity: 1;
+}
+
+.login-admin-btn:active {
+  transform: translateY(0);
+}
+
+.login-admin-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+.login-admin-btn svg {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.login-admin-btn:hover svg {
+  transform: rotate(10deg);
+}
+.login-admin-btn.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.login-admin-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Pied de page */
+.login-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.forgot-password {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: var(--text-white);
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-admin-form {
+    margin: 1rem;
+    padding: 2rem 1.5rem;
+  }
+  
+  .login-header h2 {
+    font-size: 1.5rem;
+  }
+
+}

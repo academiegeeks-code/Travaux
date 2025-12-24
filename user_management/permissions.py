@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -37,7 +37,67 @@ class Permission:
     PUBLISH_RECRUITMENT = "publish_recruitment"
     MANAGE_DOMAINS = "manage_domains"
     VIEW_DASHBOARDS = "view_dashboards"
-# Permissions by role
+    
+    #  training_management
+    VIEW_FORMATIONS = "view_formations"
+    MANAGE_FORMATIONS = "manage_formations"
+    VIEW_SESSIONS = "view_sessions"
+    MANAGE_SESSIONS = "manage_sessions"
+    ASSIGN_FORMATEUR = "assign_formateur"
+    
+    # project_management
+    VIEW_PROJECTS = "view_projects"
+    CREATE_PROJECTS = "create_projects" 
+    EDIT_PROJECTS = "edit_projects"
+    DELETE_PROJECTS = "delete_projects"
+    MANAGE_PROJECTS = "manage_projects"
+    
+    VIEW_TACHES = "view_taches"
+    CREATE_TACHES = "create_taches"
+    EDIT_TACHES = "edit_taches"
+    ASSIGN_TACHES = "assign_taches"
+    
+    UPLOAD_DOCUMENTS = "upload_documents"
+    DOWNLOAD_DOCUMENTS = "download_documents"
+    REVIEW_DOCUMENTS = "review_documents"
+
+    # internship_management
+    VIEW_THEMES = "view_themes"
+    CREATE_THEMES = "create_themes"
+    EDIT_THEMES = "edit_themes"
+    DELETE_THEMES = "delete_themes"
+    MANAGE_THEMES = "manage_themes"
+    
+    VIEW_ATTRIBUTIONS = "view_attributions"
+    CREATE_ATTRIBUTIONS = "create_attributions"
+    EDIT_ATTRIBUTIONS = "edit_attributions"
+    MANAGE_ATTRIBUTIONS = "manage_attributions"
+    
+    VIEW_SUIVIS = "view_suivis"
+    CREATE_SUIVIS = "create_suivis"
+    EDIT_SUIVIS = "edit_suivis"
+    
+    PROPOSER_THEME = "proposer_theme"
+    ACCEPTER_ATTRIBUTION = "accepter_attribution"
+    EVALUER_STAGIAIRE = "evaluer_stagiaire"
+    
+    # Nouvelles permissions announcements
+    VIEW_ANNOUNCEMENTS = "view_announcements"
+    CREATE_ANNOUNCEMENTS = "create_announcements"
+    EDIT_ANNOUNCEMENTS = "edit_announcements"
+    DELETE_ANNOUNCEMENTS = "delete_announcements"
+    MANAGE_ANNOUNCEMENTS = "manage_announcements"
+    
+    PUBLISH_ANNOUNCEMENTS = "publish_announcements"
+    PIN_ANNOUNCEMENTS = "pin_announcements"
+    
+    VIEW_COMMENTS = "view_comments"
+    CREATE_COMMENTS = "create_comments"
+    EDIT_COMMENTS = "edit_comments"
+    DELETE_COMMENTS = "delete_comments"
+    MODERATE_COMMENTS = "moderate_comments"
+    
+# Permissions by role - METTRE À JOUR
 ADMIN_PERMISSIONS = {
     Permission.LOGIN,
     Permission.MANAGE_USERS,
@@ -55,7 +115,42 @@ ADMIN_PERMISSIONS = {
     Permission.VIEW_STATS,
     Permission.VIEW_COMPANY_LOCATION,
     Permission.MANAGE_INTERNS,
-    Permission.MANAGE_SUPERVISORS
+    Permission.MANAGE_SUPERVISORS,
+    # Permissions training
+    Permission.VIEW_FORMATIONS,
+    Permission.MANAGE_FORMATIONS,
+    Permission.VIEW_SESSIONS,
+    Permission.MANAGE_SESSIONS,
+    Permission.ASSIGN_FORMATEUR,
+    # Permissions project
+    Permission.VIEW_THEMES,
+    Permission.CREATE_THEMES,
+    Permission.EDIT_THEMES,
+    Permission.DELETE_THEMES,
+    Permission.MANAGE_THEMES,
+    Permission.VIEW_ATTRIBUTIONS,
+    Permission.CREATE_ATTRIBUTIONS,
+    Permission.EDIT_ATTRIBUTIONS,
+    Permission.MANAGE_ATTRIBUTIONS,
+    Permission.VIEW_SUIVIS,
+    Permission.CREATE_SUIVIS,
+    Permission.EDIT_SUIVIS,
+    Permission.PROPOSER_THEME,
+    Permission.ACCEPTER_ATTRIBUTION,
+    Permission.EVALUER_STAGIAIRE,
+    # Permissions announcements
+    Permission.VIEW_ANNOUNCEMENTS,
+    Permission.CREATE_ANNOUNCEMENTS,
+    Permission.EDIT_ANNOUNCEMENTS,
+    Permission.DELETE_ANNOUNCEMENTS,
+    Permission.MANAGE_ANNOUNCEMENTS,
+    Permission.PUBLISH_ANNOUNCEMENTS,
+    Permission.PIN_ANNOUNCEMENTS,
+    Permission.VIEW_COMMENTS,
+    Permission.CREATE_COMMENTS,
+    Permission.EDIT_COMMENTS,
+    Permission.DELETE_COMMENTS,
+    Permission.MODERATE_COMMENTS,
 }
 
 INTERN_PERMISSIONS = {
@@ -68,6 +163,18 @@ INTERN_PERMISSIONS = {
     Permission.DOWNLOAD_CORRECTION,
     Permission.CHAT_WITH_ADMIN,
     Permission.CHAT_WITH_SUPERVISOR,
+    Permission.VIEW_FORMATIONS,
+    Permission.VIEW_SESSIONS,
+    Permission.VIEW_THEMES,
+    Permission.VIEW_ATTRIBUTIONS,
+    Permission.VIEW_SUIVIS,
+    Permission.ACCEPTER_ATTRIBUTION, 
+    Permission.VIEW_ANNOUNCEMENTS,
+    Permission.VIEW_COMMENTS,
+    Permission.CREATE_COMMENTS,
+    Permission.EDIT_COMMENTS,
+    Permission.DELETE_COMMENTS,
+    
 }
 
 SUPERVISOR_PERMISSIONS = {
@@ -79,18 +186,68 @@ SUPERVISOR_PERMISSIONS = {
     Permission.VIEW_ANNOUNCEMENTS,
     Permission.VIEW_STATS,
     Permission.VIEW_COMPANY_LOCATION,
+    Permission.VIEW_FORMATIONS,
+    Permission.VIEW_SESSIONS,
+    Permission.MANAGE_SESSIONS,  # Peut gérer ses sessions
+    Permission.VIEW_THEMES,
+    Permission.CREATE_THEMES,
+    Permission.EDIT_THEMES,
+    Permission.VIEW_ATTRIBUTIONS,
+    Permission.CREATE_ATTRIBUTIONS,
+    Permission.EDIT_ATTRIBUTIONS,
+    Permission.VIEW_SUIVIS,
+    Permission.CREATE_SUIVIS,
+    Permission.EDIT_SUIVIS,
+    Permission.PROPOSER_THEME,
+    Permission.EVALUER_STAGIAIRE,
+    Permission.SUBMIT_TASK,
+    Permission.UPLOAD_DOCUMENT,
+    Permission.DOWNLOAD_CORRECTION,
+    Permission.CHAT_WITH_ADMIN,
+     Permission.VIEW_ANNOUNCEMENTS,
+    Permission.CREATE_ANNOUNCEMENTS,
+    Permission.EDIT_ANNOUNCEMENTS,
+    Permission.PUBLISH_ANNOUNCEMENTS,
+    Permission.VIEW_COMMENTS,
+    Permission.CREATE_COMMENTS,
+    Permission.EDIT_COMMENTS,
+    Permission.DELETE_COMMENTS,
+    
 }
 
 BASIC_USER_PERMISSIONS = {
-    Permission.VIEW_ANNOUNCEMENTS,
-    Permission.VIEW_STATS,
     Permission.SEND_SUGGESTIONS,
     Permission.VIEW_COMPANY_LOCATION,
+    Permission.VIEW_FORMATIONS,  # Les visiteurs peuvent voir les formations
+    Permission.VIEW_ANNOUNCEMENTS,
+    Permission.VIEW_COMMENTS,
 }
 
 class IsAuthenticatedUser(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and not request.user.is_password_expired()
+
+from django.contrib.auth.models import Group
+
+
+class IsAdministrateur(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.groups.filter(name='Administrateur').exists()
+
+class IsEncadreur(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.groups.filter(name='Encadreur').exists()
+
+class IsStagiaire(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.groups.filter(name='Stagiaire').exists()
+
+class IsEncadreurOrReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        return request.user and request.user.groups.filter(name='Encadreur').exists()
+
 
 class HasRolePermission(BasePermission):
     def has_permission(self, request, view):
@@ -110,30 +267,21 @@ class HasRolePermission(BasePermission):
 class HasPermissionPermission(BasePermission):
     def has_permission(self, request, view):
         required_permission = getattr(view, 'required_permission', None)
-        required_permissions = getattr(view, 'required_permissions', None)
         
-        # Convertir les Enum en strings si nécessaire
-        if isinstance(required_permission, Enum):
-            required_permission = required_permission.name.lower()
-        
-        if required_permissions:
-            required_permissions = [p.name.lower() if isinstance(p, Enum) else p for p in required_permissions]
-        
-        user_permissions = request.user.get_permissions() if request.user.is_authenticated else BASIC_USER_PERMISSIONS
-
         if not request.user.is_authenticated:
-            return (required_permission in BASIC_USER_PERMISSIONS) or (required_permissions and all(p in BASIC_USER_PERMISSIONS for p in required_permissions))
+            return False
+        
         if request.user.is_password_expired():
             return False
         
-        # Convertir user_permissions en strings si nécessaire
-        user_perms_set = {p.name.lower() if isinstance(p, Enum) else p for p in user_permissions}
+        # Utiliser votre système de permissions personnalisé
+        user_permissions = request.user.get_permissions()
         
-        if required_permission and required_permission not in user_perms_set:
+        if required_permission and required_permission not in user_permissions:
             return False
-        if required_permissions and not all(p in user_perms_set for p in required_permissions):
-            return False
+            
         return True
+      
 class HasPermissionOrRole(BasePermission):
     def has_permission(self, request, view):
         required_permission = getattr(view, 'required_permission', None)

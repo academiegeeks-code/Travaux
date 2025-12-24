@@ -1,0 +1,150 @@
+/* src/pages/AdminSection/Components/Projects/FormationsTab/components/FormationDetail.css */
+.formation-detail {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.back-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: 1px solid #e1e5e9;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: #f8f9fa;
+}
+
+.supports-btn {
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.edit-btn {
+  border-color: #27ae60;
+  color: #27ae60;
+}
+
+.detail-content {
+  max-width: 800px;
+}
+
+.formation-info h1 {
+  color: #2c3e50;
+  margin-bottom: 16px;
+}
+
+.formation-description {
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.supports-section {
+  border-top: 1px solid #e1e5e9;
+  padding-top: 24px;
+}
+
+.supports-section h3 {
+  color: #2c3e50;
+  margin-bottom: 16px;
+}
+
+.empty-supports {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.add-supports-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.supports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.support-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.support-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.support-type {
+  background: #e9ecef;
+  color: #495057;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}

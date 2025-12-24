@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./CssFiles/LoginPage.css";
+import "./CssFiles/Login/LoginPage.css";
 import Navbar from "../ui/Navbar";
 import useAuth from "../hooks/useAuth";
 import LogoTracker from "../LogoTracker.png";
@@ -80,7 +80,7 @@ const LoginPage = () => {
           <div className="login-icon">
             <img src={LogoTracker} alt="Logo" />
           </div>
-          <h2>Espace Administrateur</h2>
+          <h2>Espace Login</h2>
           <p>Accédez au tableau de bord de gestion</p>
         </div>
 

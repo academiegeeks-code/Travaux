@@ -154,7 +154,7 @@ const DashboardView = () => {
   const [stats] = useState([
     {
       title: 'Utilisateurs Actifs',
-      value: '2,842',
+      value: '3',
       change: 12,
       icon: <People />,
       color: theme.palette.primary.main
@@ -162,20 +162,13 @@ const DashboardView = () => {
     {
       title: 'Projets en Cours',
       value: '156',
-      change: 5,
+      change: 3,
       icon: <School />,
       color: theme.palette.secondary.main
     },
     {
-      title: 'Messages Non Lus',
-      value: '28',
-      change: -3,
-      icon: <Chat />,
-      color: theme.palette.error.main
-    },
-    {
       title: 'Formations Complétées',
-      value: '1,254',
+      value: '5',
       change: 18,
       icon: <Assessment />,
       color: theme.palette.success.main

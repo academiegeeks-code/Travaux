@@ -14,7 +14,7 @@ def verify_captcha(token):
     if not token:
         return False
 
-    secret_key = settings.RECAPTCHA_SECRET_KEY  # Ta clé secrète Google reCAPTCHA configurée dans settings.py
+    secret_key = settings.RECAPTCHA_SECRET_KEY  
     payload = {
         'secret': secret_key,
         'response': token,

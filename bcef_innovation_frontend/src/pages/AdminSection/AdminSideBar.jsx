@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
@@ -37,26 +37,30 @@ import {
   ExpandMore as ExpandMoreIcon,
   Brightness4 as DarkModeIcon,
   Brightness7 as LightModeIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  Archive as ArchiveIcon,
+  Description as JournalIcon
 } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
-import { useTheme as useAppTheme } from '../contexts/ThemeContext'; // Context personnalisé pour le thème
+import { useTheme as useAppTheme } from '../contexts/ThemeContext';
 
-const drawerWidth = 280;
-const compactDrawerWidth = 72;
+// Constants
+const DRAWER_WIDTH = 280;
+const COMPACT_DRAWER_WIDTH = 72;
+const LOCAL_STORAGE_KEY = 'sidebarState';
 
-// Animation de fondu
+// Animations
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateX(-10px); }
   to { opacity: 1; transform: translateX(0); }
 `;
 
-// Animation de la barre d'indicateur
 const slideIn = keyframes`
   from { height: 0; opacity: 0; }
   to { height: 24px; opacity: 1; }
 `;
 
+// Styled Components
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -123,6 +127,33 @@ const FooterSection = styled('div')(({ theme }) => ({
   backdropFilter: 'blur(8px)',
 }));
 
+const MenuItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'compact',
+})(({ theme, selected, compact }) => ({
+  position: 'relative',
+  margin: theme.spacing(0, 1, 0.5, 1),
+  borderRadius: 12,
+  minHeight: 48,
+  animation: `${fadeIn} 0.3s ease-out`,
+  transition: theme.transitions.create(['background-color', 'transform'], {
+    duration: theme.transitions.duration.shortest,
+  }),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+    transform: compact ? 'none' : 'translateX(4px)',
+  },
+  ...(selected && {
+    backgroundColor: alpha(theme.palette.primary.main, 0.15),
+    color: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.primary.main, 0.2),
+    },
+    '& .MuiListItemIcon-root': {
+      color: theme.palette.primary.main,
+    },
+  }),
+}));
+
 const AdminSidebar = ({ open, setOpen }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -135,36 +166,7 @@ const AdminSidebar = ({ open, setOpen }) => {
     chat: 12
   });
 
-  // Récupération de l'état depuis le localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem('sidebarState');
-    if (savedState) {
-      const { isOpen, isFooterExpanded } = JSON.parse(savedState);
-      setOpen(isOpen);
-      setFooterExpanded(isFooterExpanded);
-    }
-  }, [setOpen]);
-
-  // Sauvegarde de l'état dans le localStorage
-  useEffect(() => {
-    const sidebarState = {
-      isOpen: open,
-      isFooterExpanded: footerExpanded
-    };
-    localStorage.setItem('sidebarState', JSON.stringify(sidebarState));
-  }, [open, footerExpanded]);
-
-  // Adaptation automatique du thème selon l'heure
-  useEffect(() => {
-    const hour = new Date().getHours();
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    // Activer le mode sombre après 19h ou selon la préférence système
-    if ((hour >= 19 || hour < 6) && prefersDark && mode === 'light') {
-      toggleTheme();
-    }
-  }, [mode, toggleTheme]);
-
+  // Menu items configuration
   const menuItems = useMemo(() => [
     {
       id: 'dashboard',
@@ -184,7 +186,7 @@ const AdminSidebar = ({ open, setOpen }) => {
     },
     {
       id: 'projects',
-      text: 'Projets et Formations',
+      text: 'Travaux',
       icon: <SchoolIcon />,
       description: 'Analyse des projets, suivi des formations et reporting.',
       path: '/projects',
@@ -192,41 +194,95 @@ const AdminSidebar = ({ open, setOpen }) => {
     },
     {
       id: 'activity',
-      text: 'Activité et Communication',
+      text: 'Communications',
       icon: <ChatIcon />,
       description: 'Tableau des connexions, gestion et statistiques du chat.',
       path: '/activity',
       badge: notifications.activity
     },
     {
-      id: 'settings',
-      text: 'Paramètres du système',
-      icon: <SettingsIcon />,
-      description: 'Personnalisation de l\'interface, gestion des logs et maintenance.',
-      path: '/settings',
+      id: 'archiving',
+      text: 'Archivage',
+      icon: <ArchiveIcon />,
+      description: 'Gestion des archives et documents historiques.',
+      path: '/archiving',
+      badge: 0
+    },
+    {
+      id: 'journal',
+      text: 'Journal',
+      icon: <JournalIcon />,
+      description: 'Consultation des logs et activités système.',
+      path: '/journal',
       badge: 0
     }
+    
   ], [notifications.activity]);
 
+  // Récupération de l'état depuis le localStorage
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedState) {
+        const { isOpen, isFooterExpanded } = JSON.parse(savedState);
+        setOpen(isOpen);
+        setFooterExpanded(isFooterExpanded);
+      }
+    } catch (error) {
+      console.error('Error loading sidebar state from localStorage:', error);
+      // Réinitialiser avec des valeurs par défaut en cas d'erreur
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  }, [setOpen]);
+
+  // Sauvegarde de l'état dans le localStorage
+  useEffect(() => {
+    const sidebarState = {
+      isOpen: open,
+      isFooterExpanded: footerExpanded
+    };
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sidebarState));
+    } catch (error) {
+      console.error('Error saving sidebar state to localStorage:', error);
+    }
+  }, [open, footerExpanded]);
+
+  // Adaptation automatique du thème selon l'heure
+  useEffect(() => {
+    const hour = new Date().getHours();
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Activer le mode sombre après 19h ou selon la préférence système
+    if ((hour >= 19 || hour < 6) && prefersDark && mode === 'light') {
+      toggleTheme();
+    }
+  }, [mode, toggleTheme]);
+
   const filteredMenuItems = useMemo(() => {
-    if (!searchQuery) return menuItems;
+    if (!searchQuery.trim()) return menuItems;
+    const query = searchQuery.toLowerCase();
     return menuItems.filter(item => 
-      item.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      item.text.toLowerCase().includes(query) ||
+      item.description.toLowerCase().includes(query)
     );
   }, [menuItems, searchQuery]);
 
-  const handleDrawerToggle = () => {
-    setOpen(!open);
-  };
+  const handleDrawerToggle = useCallback(() => {
+    setOpen(prevOpen => !prevOpen);
+  }, [setOpen]);
 
-  const handleFooterToggle = () => {
-    setFooterExpanded(!footerExpanded);
-  };
+  const handleFooterToggle = useCallback(() => {
+    setFooterExpanded(prev => !prev);
+  }, []);
 
-  const isItemSelected = (path) => {
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const isItemSelected = useCallback((path) => {
     return location.pathname === path;
-  };
+  }, [location.pathname]);
 
   const drawer = (
     <>
@@ -254,6 +310,7 @@ const AdminSidebar = ({ open, setOpen }) => {
               transform: 'rotate(90deg)',
             }
           }}
+          aria-label={open ? "Réduire le menu" : "Étendre le menu"}
         >
           <ChevronLeftIcon />
         </IconButton>
@@ -267,7 +324,7 @@ const AdminSidebar = ({ open, setOpen }) => {
           size="small"
           placeholder="Rechercher un menu..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -275,89 +332,74 @@ const AdminSidebar = ({ open, setOpen }) => {
               </InputAdornment>
             ),
           }}
+          aria-label="Rechercher dans le menu"
         />
       </Collapse>
       
       <List sx={{ flexGrow: 1, overflow: 'auto', py: 1 }}>
-        {filteredMenuItems.map((item) => (
-          <StyledTooltip 
-            key={item.id} 
-            title={
-              !open ? (
-                <Box>
-                  <Typography variant="subtitle2" gutterBottom>
-                    {item.text}
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                    {item.description}
-                  </Typography>
-                </Box>
-              ) : '' 
-            } 
-            placement="right"
-            arrow
-          >
-            <ListItem
-              button
-              component={Link}
-              to={item.path}
-              selected={isItemSelected(item.path)}
-              sx={{
-                position: 'relative',
-                mx: 1,
-                mb: 0.5,
-                borderRadius: 2,
-                minHeight: 48,
-                animation: `${fadeIn} 0.3s ease-out`,
-                transition: theme.transitions.create(['background-color', 'transform'], {
-                  duration: theme.transitions.duration.shortest,
-                }),
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  transform: 'translateX(4px)',
-                },
-                '&.Mui-selected': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.15),
-                  color: theme.palette.primary.main,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                  },
-                  '& .MuiListItemIcon-root': {
-                    color: theme.palette.primary.main,
-                  },
-                },
-              }}
+        {filteredMenuItems.length > 0 ? (
+          filteredMenuItems.map((item) => (
+            <StyledTooltip 
+              key={item.id} 
+              title={
+                !open ? (
+                  <Box>
+                    <Typography variant="subtitle2" gutterBottom>
+                      {item.text}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                      {item.description}
+                    </Typography>
+                  </Box>
+                ) : '' 
+              } 
+              placement="right"
+              arrow
             >
-              {isItemSelected(item.path) && <ActiveIndicator />}
-              
-              <ListItemIcon
-                sx={{
-                  minWidth: open ? 56 : 40,
-                  color: 'inherit',
-                  transition: theme.transitions.create('color', {
-                    duration: theme.transitions.duration.shortest,
-                  }),
-                }}
+              <MenuItem
+                button
+                component={Link}
+                to={item.path}
+                selected={isItemSelected(item.path)}
+                compact={!open}
               >
-                <Badge badgeContent={item.badge} color="error" max={9}>
-                  {item.icon}
-                </Badge>
-              </ListItemIcon>
-              
-              {open && (
-                <ListItemText 
-                  primary={item.text} 
-                  primaryTypographyProps={{
-                    fontWeight: isItemSelected(item.path) ? 600 : 400,
-                    transition: theme.transitions.create('font-weight', {
+                {isItemSelected(item.path) && <ActiveIndicator />}
+                
+                <ListItemIcon
+                  sx={{
+                    minWidth: open ? 56 : 40,
+                    color: 'inherit',
+                    transition: theme.transitions.create('color', {
                       duration: theme.transitions.duration.shortest,
                     }),
                   }}
-                />
-              )}
-            </ListItem>
-          </StyledTooltip>
-        ))}
+                >
+                  <Badge badgeContent={item.badge} color="error" max={9}>
+                    {item.icon}
+                  </Badge>
+                </ListItemIcon>
+                
+                {open && (
+                  <ListItemText 
+                    primary={item.text} 
+                    primaryTypographyProps={{
+                      fontWeight: isItemSelected(item.path) ? 600 : 400,
+                      transition: theme.transitions.create('font-weight', {
+                        duration: theme.transitions.duration.shortest,
+                      }),
+                    }}
+                  />
+                )}
+              </MenuItem>
+            </StyledTooltip>
+          ))
+        ) : (
+          <Box sx={{ textAlign: 'center', py: 2, px: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Aucun résultat trouvé
+            </Typography>
+          </Box>
+        )}
       </List>
       
       <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.1) }} />
@@ -371,6 +413,8 @@ const AdminSidebar = ({ open, setOpen }) => {
             borderRadius: 2,
             mb: footerExpanded ? 1 : 0,
           }}
+          aria-expanded={footerExpanded}
+          aria-label="Options du profil"
         >
           <ListItemIcon>
             <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>
@@ -404,6 +448,7 @@ const AdminSidebar = ({ open, setOpen }) => {
                 checked={mode === 'dark'}
                 onChange={toggleTheme}
                 color="primary"
+                inputProps={{ 'aria-label': 'Basculer le mode sombre' }}
               />
             </Box>
             
@@ -415,6 +460,8 @@ const AdminSidebar = ({ open, setOpen }) => {
                 px: 1,
                 mb: 0.5
               }}
+              component={Link}
+              to="/profile-settings"
             >
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <SettingsIcon fontSize="small" />
@@ -428,6 +475,10 @@ const AdminSidebar = ({ open, setOpen }) => {
                 borderRadius: 1,
                 py: 0.5,
                 px: 1
+              }}
+              onClick={() => {
+                // Logique de déconnexion
+                console.log('Déconnexion');
               }}
             >
               <ListItemIcon sx={{ minWidth: 36 }}>
@@ -449,10 +500,10 @@ const AdminSidebar = ({ open, setOpen }) => {
         onClose={handleDrawerToggle}
         ModalProps={{ keepMounted: true }}
         sx={{
-          width: isMobile ? '100%' : (open ? drawerWidth : compactDrawerWidth),
+          width: isMobile ? '100%' : (open ? DRAWER_WIDTH : COMPACT_DRAWER_WIDTH),
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: isMobile ? '80%' : (open ? drawerWidth : compactDrawerWidth),
+            width: isMobile ? '80%' : (open ? DRAWER_WIDTH : COMPACT_DRAWER_WIDTH),
             boxSizing: 'border-box',
             overflowX: 'hidden',
             background: theme.palette.mode === 'dark'
@@ -499,4 +550,4 @@ const AdminSidebar = ({ open, setOpen }) => {
   );
 };
 
-export default AdminSidebar;
+export default React.memo(AdminSidebar);

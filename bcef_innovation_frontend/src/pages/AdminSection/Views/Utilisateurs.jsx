@@ -1,12 +1,12 @@
-// src/views/AdvancedUserView.jsx (composant principal refactorisé)
-import React, { useState, useMemo } from 'react';
+// src/views/AdvancedUserView.jsx
+import React, { useState, useMemo, useEffect } from 'react';
 import UserForm from "./../Components/Formulaire";
 import AdminSideBar from "./../AdminSideBar";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Box, CssBaseline, Paper, Collapse } from '@mui/material';
-import { useUsers } from './../Hooks/useUsers';
+import { Box, CssBaseline, Collapse } from '@mui/material';
+import { useUsers } from './../Hooks/users/useUsers';
 import UserDetailsDrawer from './../Components/UserDetailsDrawer';
-import UserToolbar from './../Components/UserToolbar';
+import UserToolbar from './../Components/UserToolbar'; // ← La version sticky corrigée
 import AISuggestions from './../Components/AISuggestions';
 import BulkActionSuggestion from './../Components/BulkActionSuggestion';
 import UserTableView from './../Components/UserTableView';
@@ -14,24 +14,23 @@ import UserOrganigram from './../Components/UserOrganigram';
 import ImportDialog from './../Components/ImportDialog';
 import LoadingSpinner from '../Components/LoadingSpinner';
 
-// Thème personnalisé (inchangé)
 const getDesignTokens = (mode) => ({
   palette: {
     mode,
-    ...(mode === 'light' ? { /* ... */ } : { /* ... */ }),
+    ...(mode === 'light'
+      ? { background: { default: '#f5f5f5', paper: '#ffffff' } }
+      : { background: { default: '#121212', paper: '#1e1e1e' } }),
   },
-  transitions: { /* ... */ },
 });
 
-
-
 const AdvancedUserView = () => {
-  const [ sidebarOpen, setSidebarOpen ] = useState(true);
-  const [mode, setMode] = useState('light');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mode] = useState('light');
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+
   const [showForm, setShowForm] = useState(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,131 +41,154 @@ const AdvancedUserView = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [aiSuggestionsOpen, setAiSuggestionsOpen] = useState(true);
+  const [bulkSuggestion, setBulkSuggestion] = useState(null);
 
-  const { users, loading, selected, handleSelectAllClick, handleClick, isSelected, addUser, setSelected } = useUsers();
+  const {
+    users,
+    loading,
+    selected,
+    handleSelectAllClick,
+    handleClick,
+    isSelected,
+    archiveUser,
+    restoreUser,
+    addSingleUser,
+    getBulkActionSuggestions,
+    exportUsers,
+  } = useUsers();
 
-  // Filtrage des données (inchangé, mais pourrait être extrait en hook si besoin)
+  useEffect(() => {
+    const suggestion = getBulkActionSuggestions();
+    setBulkSuggestion(suggestion);
+  }, [selected, getBulkActionSuggestions]);
+
+  // Filtrage + tri + pagination (inchangé)
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) || user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          user.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = roleFilter === 'Tous' || user.role === roleFilter;
     const matchesStatus = statusFilter === 'Tous' || user.status === statusFilter;
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  // Tri des données
-  const sortedUsers = filteredUsers.sort((a, b) => {
-    if (order === 'asc') {
-      return a[orderBy] < b[orderBy] ? -1 : 1;
-    }
-    return a[orderBy] > b[orderBy] ? -1 : 1;
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    return order === 'asc'
+      ? a[orderBy] < b[orderBy] ? -1 : 1
+      : a[orderBy] > b[orderBy] ? -1 : 1;
   });
 
   const currentUsers = sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
-  const handleRequestSort = (property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleChangePage = (event, newPage) => setPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const openUserDetail = (user) => {
     setSelectedUser(user);
     setDetailSidebarOpen(true);
   };
 
-  const getBulkActionSuggestion = () => {
-    if (selected.length === 0) return null;
-    const selectedUsers = users.filter(user => selected.includes(user.id));
-    const inactiveUsers = selectedUsers.filter(user => user.status === 'Inactif');
-    if (inactiveUsers.length === selected.length) {
-      return "Souhaitez-vous réactiver ces utilisateurs ?";
+  const handleBulkActionConfirm = async () => {
+    if (bulkSuggestion?.action) {
+      await bulkSuggestion.action();
+      setBulkSuggestion(null);
     }
-    return null;
   };
 
-  if (loading) return <LoadingSpinner/>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex' }}>
-        {/* Intégration de la barre latérale */}
+
+      {/* STRUCTURE CORRIGÉE */}
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <AdminSideBar open={sidebarOpen} setOpen={setSidebarOpen} />
-        <UserDetailsDrawer open={detailSidebarOpen} onClose={() => setDetailSidebarOpen(false)} user={selectedUser} />
-        <Box component="main" sx={{ 
-          flexGrow: 1, 
-          p: 3,
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          overflow: 'hidden'
-        }}>
-          <Paper>
-            <UserToolbar
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              roleFilter={roleFilter}
-              setRoleFilter={setRoleFilter}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              setImportDialogOpen={setImportDialogOpen}
-              setShowForm={setShowForm}
+        <UserDetailsDrawer
+          open={detailSidebarOpen}
+          onClose={() => setDetailSidebarOpen(false)}
+          user={selectedUser}
+        />
+
+        {/* CONTENU PRINCIPAL */}
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+
+          {/* TOOLBAR FIXE EN HAUT (sortie du flux) */}
+          <UserToolbar
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            roleFilter={roleFilter}
+            setRoleFilter={setRoleFilter}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            setImportDialogOpen={setImportDialogOpen}
+            setShowForm={setShowForm}
+            onExport={exportUsers}
+          />
+
+          {/* CONTENU SCROLLABLE */}
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              p: 3,
+              pb: 6,
+              overflow: 'auto',
+              bgcolor: 'background.default',
+            }}
+          >
+            {/* Suggestions IA */}
+            <Collapse in={aiSuggestionsOpen}>
+              <Box sx={{ mb: 3 }}>
+                <AISuggestions
+                  open={aiSuggestionsOpen}
+                  onClose={() => setAiSuggestionsOpen(false)}
+                />
+              </Box>
+            </Collapse>
+
+            <BulkActionSuggestion
+              suggestion={bulkSuggestion?.message}
+              type={bulkSuggestion?.type}
+              onConfirm={handleBulkActionConfirm}
+              onClose={() => setBulkSuggestion(null)}
             />
-          </Paper>
-          
-          {/* Suggestions IA avec animation de collapse */}
-          <Collapse in={aiSuggestionsOpen} timeout={300}>
-            <AISuggestions 
-              open={aiSuggestionsOpen} 
-              onClose={() => setAiSuggestionsOpen(false)} 
-            />
-          </Collapse>
-          
-          <BulkActionSuggestion suggestion={getBulkActionSuggestion()} />
-          
-          {/* Conteneur principal avec gestion d'espace dynamique */}
-          <Box sx={{ 
-            flex: 1, 
-            display: 'flex', 
-            flexDirection: 'column',
-            overflow: 'hidden',
-            transition: 'height 0.3s ease-in-out',
-            height: aiSuggestionsOpen ? 'calc(100% - 180px)' : 'calc(100% - 60px)'
-          }}>
+
+            {/* Vue principale */}
             {viewMode === 'table' ? (
               <UserTableView
                 users={currentUsers}
                 filteredUsers={filteredUsers}
                 order={order}
                 orderBy={orderBy}
-                handleRequestSort={handleRequestSort}
+                handleRequestSort={(prop) => {
+                  const isAsc = orderBy === prop && order === 'asc';
+                  setOrder(isAsc ? 'desc' : 'asc');
+                  setOrderBy(prop);
+                }}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                handleChangePage={handleChangePage}
-                handleChangeRowsPerPage={handleChangeRowsPerPage}
+                handleChangePage={(_, newPage) => setPage(newPage)}
+                handleChangeRowsPerPage={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
                 selected={selected}
                 handleSelectAllClick={handleSelectAllClick}
                 handleClick={handleClick}
                 isSelected={isSelected}
                 openUserDetail={openUserDetail}
+                onUserArchive={archiveUser}
+                onUserRestore={restoreUser}
               />
             ) : (
               <UserOrganigram users={users} />
             )}
           </Box>
-          
-          <UserForm open={showForm} onClose={() => setShowForm(false)} onAddUser={addUser} />
-          <ImportDialog open={importDialogOpen} onClose={() => setImportDialogOpen(false)} />
         </Box>
       </Box>
+
+      {/* Dialogs */}
+      <UserForm open={showForm} onClose={() => setShowForm(false)} onAddUser={addSingleUser} />
+      <ImportDialog open={importDialogOpen} onClose={() => setImportDialogOpen(false)} onUsersImported={() => {}} />
     </ThemeProvider>
   );
 };
